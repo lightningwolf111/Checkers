@@ -1,0 +1,746 @@
+<head>
+	<style type="text/css">
+		.black {
+			background-color: black;
+			width: 50px;
+			height: 50px;
+		}
+		.brown {
+			background-color: brown;
+			width: 50px;
+			height: 50px;
+		}
+		table, tr, td {
+			border-collapse: collapse;
+		}
+		.redChecker {
+			border-radius: 25px;
+			background-color: red;
+			height: 50px;
+			width: 50px;
+
+		}
+		.blueChecker {
+			border-radius: 25px;
+			background-color: blue;
+
+			height: 50px;
+			width: 50px;
+		}
+		.redQueen {
+
+		}
+	</style>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+	</script>
+	<script type="text/javascript">
+		
+/*
+TODO:
+- condense functions and remove duplicates
+- Make Ruby have the moves stored
+- problem if multiple checkers are pressed in one move.
+- checkers that make it to the end?
+	- move backwards like normal checkers for now
+
+
+*/
+
+		var turn = 2; // blue actually starts, changes to one at very start. Blue is 1, Red is 2
+		var moveTaken = false; // Used for jumping
+		var blueCheckersShown = [];
+		var redCheckersShown = [];
+    	
+		
+    	$(document).ready(function(){
+
+    		$("#checker28blue").hide();
+    		$("#checker48blue").hide();
+    		$("#checker68blue").hide();
+    		$("#checker88blue").hide();
+    		$("#checker17blue").hide();
+    		$("#checker37blue").hide();
+    		$("#checker57blue").hide();
+    		$("#checker77blue").hide();
+    		$("#checker26blue").hide();
+    		$("#checker46blue").hide();
+    		$("#checker66blue").hide();
+    		$("#checker86blue").hide();
+
+    		$("#checker15blue").hide();
+    		$("#checker35blue").hide();
+    		$("#checker55blue").hide();
+    		$("#checker75blue").hide();
+    		$("#checker15red").hide();
+    		$("#checker35red").hide();
+    		$("#checker55red").hide();
+    		$("#checker75red").hide();
+
+    		$("#checker24blue").hide();
+    		$("#checker44blue").hide();
+    		$("#checker64blue").hide();
+    		$("#checker84blue").hide();
+    		$("#checker24red").hide();
+    		$("#checker44red").hide();
+    		$("#checker64red").hide();
+    		$("#checker84red").hide();
+
+    		$("#checker13red").hide();
+    		$("#checker33red").hide();
+    		$("#checker53red").hide();
+    		$("#checker73red").hide();
+    		$("#checker22red").hide();
+    		$("#checker42red").hide();
+    		$("#checker62red").hide();
+    		$("#checker82red").hide();
+    		$("#checker11red").hide();
+    		$("#checker31red").hide();
+    		$("#checker51red").hide();
+    		$("#checker71red").hide();
+			
+    		blueCheckersShown.push(11,31,51,71,22,42,62,82,13,33,73, 53);
+    		redCheckersShown.push(26,46,66,86,17,37,57,77,28,48,68,88);
+
+    		$("#btn1").click(function(){
+        	$("p").hide();
+    		});
+
+    		oneTurn();
+    		
+    	});
+
+    	function oneTurn() {
+			$("*").off();
+			
+			if(turn == 1) {
+				turn = 2;
+			} else if(turn == 2){
+				turn = 1;
+			}
+			moveTaken = false;
+			document.getElementById("turn").innerHTML = turn;
+			for(var i = 0; i < blueCheckersShown.length; i++){
+    			createMove(blueCheckersShown[i], "right", "blue");
+    			createMove(blueCheckersShown[i], "left", "blue");
+    		}
+    		
+    		for(var i = 0; i < redCheckersShown.length; i++){
+    			createMove(redCheckersShown[i], "right", "red");
+    			createMove(redCheckersShown[i], "left", "red");
+    		}
+    		
+		}
+		
+		function createMove(num, dir, color) {
+			if(color == "blue") {
+				$("#checker"+ num +"blue").click(function(){
+    			$("*").keydown(function(event){
+    				if (event.which == 39 && dir == "right") {
+    					new move(num, "right", "blue");
+    					new jumpBlue(num, "right");
+    				}
+    				if (event.which == 37 && dir == "left") {
+    					new move(num, "left", "blue");
+    					new jumpBlue(num, "left");
+    				}
+    			});
+    			});
+			}
+			if(color == "red") {
+				$("#checker"+ num +"red").click(function(){
+    			$("*").keydown(function(event){
+    				if (event.which == 39 && dir == "right") {
+    					new move(num, "right", "red");
+    					new jumpRightR(num);
+    				}
+    				if (event.which == 37 && dir == "left") {
+    					new move(num, "left", "red");
+    					new jumpLeftR(num);
+    				}
+    			});
+    			});
+			}
+		}
+
+		function move(original, dir, color) {
+			var newNum;
+			if(color == "blue") {
+				if(dir == "right") {
+					newNum = original + 11;
+				} else if (dir == "left") {
+					newNum = original - 9;
+				}
+				if(turn == 1 && !blueCheckersShown.includes(newNum) && !redCheckersShown.includes(newNum) && newNum > 10 && newNum < 89
+				&& moveTaken == false) {
+					$("#checker" + original + "blue").hide();
+        			$("#checker" + newNum + "blue").show();
+					for(var i = 0; i < blueCheckersShown.length; i++){ 
+        				if(blueCheckersShown[i] == original) {
+        					blueCheckersShown.splice(i, 1);
+        				}
+        			}
+        			blueCheckersShown.push(newNum);
+        			moveTaken = true;
+				oneTurn();
+				}
+			}
+			if(color == "red") {
+				if(dir == "right") {
+					newNum = original + 9;
+				} else if (dir == "left") {
+					newNum = original - 11;
+				}
+				if(turn == 2 && !blueCheckersShown.includes(newNum) && !redCheckersShown.includes(newNum) && newNum > 10 && newNum < 89
+				&& moveTaken == false) {
+					$("#checker" + original + "red").hide();
+        			$("#checker" + newNum + "red").show();
+					for(var i = 0; i < redCheckersShown.length; i++){ 
+        				if(redCheckersShown[i] == original) {
+        					redCheckersShown.splice(i, 1);
+        				}
+        			}
+        			redCheckersShown.push(newNum);
+        			moveTaken = true;
+				oneTurn();
+				}
+			}
+		}
+
+		// jumping
+
+		function jumpBlue(original, dir) {
+			var newNum;
+			var jumpedOver;
+			if(dir == "right") {
+				newNum = original + 22;
+				jumpedOver = original + 11;
+			} else if(dir == "left") {
+				newNum = original - 18;
+				jumpedOver = original - 9;
+			} else {alert("jumpBlue in neither direction");}
+			if(turn == 1 && !redCheckersShown.includes(newNum) && !blueCheckersShown.includes(newNum)
+				&& newNum > 10 && newNum < 89
+				&& redCheckersShown.includes(jumpedOver)
+				&& moveTaken == false)
+			{
+				$("#checker" + original + "blue").hide();
+        		$("#checker" + newNum + "blue").show();
+        		$("#checker" + jumpedOver + "red").hide();
+        		for(var i = 0; i < blueCheckersShown.length; i++){ 
+        			if(blueCheckersShown[i] == original) {
+        				blueCheckersShown.splice(i, 1);
+        			}
+        		}
+        		for(var i = 0; i < redCheckersShown.length; i++){ 
+        			if(redCheckersShown[i] == jumpedOver) {
+        				redCheckersShown.splice(i, 1);
+        			}
+        		}
+        		blueCheckersShown.push(newNum);
+        		moveTaken = true;
+        		//oneTurn();
+        		secondJumpRightB(newNum);
+        	}
+		}
+
+		/*function jumpRightB(original) {
+			//alert("jump");
+			var newNum = original + 22;
+			var jumpedOver = original + 11;
+			if(turn == 1 && !redCheckersShown.includes(newNum) && !blueCheckersShown.includes(newNum)
+				&& newNum > 10 && newNum < 89
+				&& redCheckersShown.includes(jumpedOver)
+				&& moveTaken == false)
+			{
+				$("#checker" + original + "blue").hide();
+        		$("#checker" + newNum + "blue").show();
+        		$("#checker" + jumpedOver + "red").hide();
+
+        		for(var i = 0; i < blueCheckersShown.length; i++){ 
+        			if(blueCheckersShown[i] == original) {
+        				blueCheckersShown.splice(i, 1);
+        			}
+        		}
+        		for(var i = 0; i < redCheckersShown.length; i++){ 
+        			if(redCheckersShown[i] == jumpedOver) {
+        				redCheckersShown.splice(i, 1);
+        			}
+        		}
+        		blueCheckersShown.push(newNum);
+        		moveTaken = true;
+        		//oneTurn();
+        		secondJumpRightB(newNum);
+        		
+			}
+		}
+
+		function jumpLeftB(original) {
+			
+			var newNum = original -18;
+			var jumpedOver = original -9;
+			if(turn == 1 && !redCheckersShown.includes(newNum) && !blueCheckersShown.includes(newNum)
+				&& newNum > 10 && newNum < 89
+				&& redCheckersShown.includes(jumpedOver)
+				&& moveTaken == false)
+			{
+				$("#checker" + original + "blue").hide();
+        		$("#checker" + newNum + "blue").show();
+        		$("#checker" + jumpedOver + "red").hide();
+
+        		for(var i = 0; i < blueCheckersShown.length; i++){ 
+        			if(blueCheckersShown[i] == original) {
+        				blueCheckersShown.splice(i, 1);
+        			}
+        		}
+        		for(var i = 0; i < redCheckersShown.length; i++){ 
+        			if(redCheckersShown[i] == jumpedOver) {
+        				redCheckersShown.splice(i, 1);
+        			}
+        		}
+        		blueCheckersShown.push(newNum);
+        		moveTaken = true;
+        		//oneTurn();
+        		secondJumpLeftB(newNum);
+			}
+		}
+		*/
+
+		function jumpRightR(original) {
+			var newNum = original  + 18;
+			var jumpedOver = original + 9;
+			if(turn == 2 && !redCheckersShown.includes(newNum) && !blueCheckersShown.includes(newNum)
+				&& newNum > 10 && newNum < 89
+				&& blueCheckersShown.includes(jumpedOver)
+				&& moveTaken == false)
+			{
+				
+				$("#checker" + original + "red").hide();
+        		$("#checker" + newNum + "red").show();
+        		$("#checker" + jumpedOver + "blue").hide();
+
+        		for(var i = 0; i < redCheckersShown.length; i++){ 
+        			if(redCheckersShown[i] == original) {
+        				redCheckersShown.splice(i, 1);
+        			}
+        		}
+        		for(var i = 0; i < blueCheckersShown.length; i++){ 
+        			if(blueCheckersShown[i] == jumpedOver) {
+        				blueCheckersShown.splice(i, 1);
+        			}
+        		}
+        		redCheckersShown.push(newNum);
+        		moveTaken = true;
+        		//oneTurn();
+        		secondJumpRightR(newNum);
+			}
+		}
+
+		function jumpLeftR(original) {
+			var newNum = original - 22;
+			var jumpedOver = original - 11;
+			if(turn == 2 && !redCheckersShown.includes(newNum) && !blueCheckersShown.includes(newNum)
+				&& newNum > 10 && newNum < 89
+				&& blueCheckersShown.includes(jumpedOver)
+				&& moveTaken == false)
+			{
+				
+				$("#checker" + original + "red").hide();
+        		$("#checker" + newNum + "red").show();
+        		$("#checker" + jumpedOver + "blue").hide();
+
+        		for(var i = 0; i < redCheckersShown.length; i++){ 
+        			if(redCheckersShown[i] == original) {
+        				redCheckersShown.splice(i, 1);
+        			}
+        		}
+        		for(var i = 0; i < blueCheckersShown.length; i++){ 
+        			if(blueCheckersShown[i] == jumpedOver) {
+        				blueCheckersShown.splice(i, 1);
+        			}
+        		}
+        		redCheckersShown.push(newNum);
+        		moveTaken = true;
+        		//oneTurn();
+        		secondJumpLeftR(newNum);
+			}
+		}
+
+		function secondJumpRightB(original) {
+			
+			$("#checker"+ original +"blue").click(function(){
+    			$("*").keydown(function(event){
+    			if (event.which == 39) {
+    				moveTaken = false;
+    				new jumpBlue(original, "right");
+    			}
+    		});
+    		});
+    		$("#endTurn").click(function() {
+    			oneTurn();
+    			
+    		});
+		}
+
+		function secondJumpLeftB(original) {
+			
+			$("#checker"+ original +"blue").click(function(){
+    			$("*").keydown(function(event){
+    			if (event.which == 37) {
+    				moveTaken = false;
+    				new jumpBlue(original, "left");
+    			}
+    		});
+    		});
+    		$("#endTurn").click(function() {
+    			oneTurn();
+    		});
+		}
+
+		function secondJumpRightR(original) {
+			
+			$("#checker"+ original +"red").click(function(){
+    			$("*").keydown(function(event){
+    			if (event.which == 39) {
+    				moveTaken = false;
+    				new jumpRightR(original);
+    			}
+    		});
+    		});
+    		$("#endTurn").click(function() {
+    			oneTurn();
+    		});
+		}
+
+		function secondJumpLeftR(original) {
+			
+			$("#checker"+ original +"red").click(function(){
+    			$("*").keydown(function(event){
+    			if (event.which == 37) {
+    				moveTaken = false;
+    				new jumpLeftR(original);
+    			}
+    		});
+    		});
+    		$("#endTurn").click(function() {
+    			oneTurn();
+    		});
+		}
+	</script>
+</head>
+<body>
+	<h1 id = "header">Hello</h1>
+	<p id = "turn"></p>
+	<p id = "description">Blue will start</p>
+	<button id = "endTurn">End Turn</button>
+	<table>
+		<tr>
+		<th>
+		<div class="black">	
+		</div>
+	    </th>
+	    <th>
+		<div class="brown">
+			<div class="redChecker" id = "checker28red"></div>
+			<div class="blueChecker" id = "checker28blue"></div>
+		</div>
+		</th>
+		<th>
+		<div class="black">
+		</div>
+	    </th>
+	    <th>
+		<div class="brown">
+			<div class="redChecker" id = "checker48red"></div>
+			<div class="blueChecker" id = "checker48blue"></div>
+		</div>
+		</th>
+		<th>
+		<div class="black">
+		</div>
+	    </th>
+	    <th>
+		<div class="brown">
+			<div class="redChecker" id = "checker68red"></div>
+			<div class="blueChecker" id = "checker68blue"></div>
+		</div>
+		</th>
+		<th>
+		<div class="black">
+		</div>
+	    </th>
+	    <th>
+		<div class="brown">
+			<div class="redChecker" id = "checker88red"></div>
+			<div class="blueChecker" id = "checker88blue"></div>
+		</div>
+		</th>
+	</tr>
+	<tr>
+		<th>
+		<div class="brown">
+			<div class="redChecker" id = "checker17red"></div>
+			<div class="blueChecker" id = "checker17blue"></div>
+		</div>
+		</th>
+		<th>
+		<div class="black"></div>
+	    </th>
+	    <th>
+		<div class="brown">
+			<div class="redChecker" id = "checker37red"></div>
+			<div class="blueChecker" id = "checker37blue"></div>
+		</div>
+		</th>
+		<th>
+		<div class="black"></div>
+	    </th>
+	    <th>
+		<div class="brown">
+			<div class="redChecker" id = "checker57red"></div>
+			<div class="blueChecker" id = "checker57blue"></div>
+		</div>
+		</th>
+		<th>
+		<div class="black"></div>
+	    </th>
+	    <th>
+		<div class="brown">
+			<div class="redChecker" id = "checker77red"></div>
+			<div class="blueChecker" id = "checker77blue"></div>
+		</div>
+		</th>
+		<th>
+		<div class="black"></div>
+	    </th>
+	</tr>
+	<tr>
+		<th>
+		<div class="black"></div>
+	    </th>
+	    <th>
+		<div class="brown">
+			<div class="redChecker" id = "checker26red"></div>
+			<div class="blueChecker" id = "checker26blue"></div>
+		</div>
+		</th>
+		<th>
+		<div class="black"></div>
+	    </th>
+	    <th>
+		<div class="brown">
+	 		<div class="redChecker" id = "checker46red"></div>
+			<div class="blueChecker" id = "checker46blue"></div>
+	 	</div>
+		</th>
+		<th>
+		<div class="black"></div>
+	    </th>
+	    <th>
+		<div class="brown">
+			<div class="redChecker" id = "checker66red"></div>
+			<div class="blueChecker" id = "checker66blue"></div>
+		</div>
+		</th>
+		<th>
+		<div class="black"></div>
+	    </th>
+	    <th>
+		<div class="brown">
+			<div class="redChecker" id = "checker86red"></div>
+			<div class="blueChecker" id = "checker86blue"></div>
+		</div>
+		</th>
+	</tr>
+	<tr>
+		<th>
+		<div class="brown">
+			<div class="redChecker" id = "checker15red"></div>
+			<div class="blueChecker" id = "checker15blue"></div>
+		</div>
+		</th>
+		<th>
+		<div class="black"></div>
+	    </th>
+	    <th>
+		<div class="brown">
+			<div class="redChecker" id = "checker35red"></div>
+			<div class="blueChecker" id = "checker35blue"></div>
+		</div>
+		</th>
+		<th>
+		<div class="black"></div>
+	    </th>
+	    <th>
+		<div class="brown">
+			<div class="redChecker" id = "checker55red"></div>
+			<div class="blueChecker" id = "checker55blue"></div>
+		</div>
+		</th>
+		<th>
+		<div class="black"></div>
+	    </th>
+	    <th>
+		<div class="brown">
+			<div class="redChecker" id = "checker75red"></div>
+			<div class="blueChecker" id = "checker75blue"></div>
+		</div>
+		</th>
+		<th>
+		<div class="black"></div>
+	    </th>
+	</tr>
+	<tr>
+		<th>
+		<div class="black"></div>
+	    </th>
+	    <th>
+		<div class="brown">
+			<div class="redChecker" id = "checker24red"></div>
+			<div class="blueChecker" id = "checker24blue"></div>
+		</div>
+		</th>
+		<th>
+		<div class="black"></div>
+	    </th>
+	    <th>
+		<div class="brown">
+			<div class="redChecker" id = "checker44red"></div>
+			<div class="blueChecker" id = "checker44blue"></div>
+		</div>
+		</th>
+		<th>
+		<div class="black"></div>
+	    </th>
+	    <th>
+		<div class="brown">
+			<div class="redChecker" id = "checker64red"></div>
+			<div class="blueChecker" id = "checker64blue"></div>
+		</div>
+		</th>
+		<th>
+		<div class="black"></div>
+	    </th>
+	    <th>
+		<div class="brown">
+			<div class="redChecker" id = "checker84red"></div>
+			<div class="blueChecker" id = "checker84blue"></div>
+		</div>
+		</th>
+	</tr>
+	<tr>
+		<th>
+		<div class="brown">
+			<div class="redChecker" id = "checker13red"></div>
+			<div class="blueChecker" id = "checker13blue"></div>
+		</div>
+		</th>
+		<th>
+		<div class="black"></div>
+	    </th>
+	    <th>
+		<div class="brown">
+			<div class="redChecker" id = "checker33red"></div>
+			<div class="blueChecker" id = "checker33blue"></div>
+		</div>
+		</th>
+		<th>
+		<div class="black"></div>
+	    </th>
+	    <th>
+		<div class="brown">
+			<div class="redChecker" id = "checker53red"></div>
+			<div class="blueChecker" id = "checker53blue"></div>
+		</div>
+		</th>
+		<th>
+		<div class="black"></div>
+	    </th>
+	    <th>
+		<div class="brown">
+			<div class="redChecker" id = "checker73red"></div>
+			<div class="blueChecker" id = "checker73blue"></div>
+		</div>
+		</th>
+		<th>
+		<div class="black"></div>
+	    </th>
+	</tr>
+	<tr>
+		<th>
+		<div class="black"></div>
+	    </th>
+	    <th>
+		<div class="brown">
+			<div class="redChecker" id = "checker22red"></div>
+			<div class="blueChecker" id = "checker22blue"></div>
+		</div>
+		</th>
+		<th>
+		<div class="black"></div>
+	    </th>
+	    <th>
+		<div class="brown">
+			<div class="redChecker" id = "checker42red"></div>
+			<div class="blueChecker" id = "checker42blue"></div>
+		</div>
+		</th>
+		<th>
+		<div class="black"></div>
+	    </th>
+	    <th>
+		<div class="brown">
+			<div class="redChecker" id = "checker62red"></div>
+			<div class="blueChecker" id = "checker62blue"></div>
+		</div>
+		</th>
+		<th>
+		<div class="black"></div>
+	    </th>
+	    <th>
+		<div class="brown">
+			<div class="redChecker" id = "checker82red"></div>
+			<div class="blueChecker" id = "checker82blue"></div>
+		</div>
+		</th>
+	</tr>
+	<tr>
+		<th>
+		<div class="brown">
+			<div class="redChecker" id = "checker11red"></div>
+			<div class="blueChecker" id = "checker11blue"></div>
+		</div>
+		</th>
+		<th>
+		<div class="black"></div>
+	    </th>
+	    <th>
+		<div class="brown">
+			<div class="redChecker" id = "checker31red"></div>
+			<div class="blueChecker" id = "checker31blue"></div>
+		</div>
+		</th>
+		<th>
+		<div class="black"></div>
+	    </th>
+	    <th>
+		<div class="brown">
+			<div class="redChecker" id = "checker51red"></div>
+			<div class="blueChecker" id = "checker51blue"></div>
+		</div>
+		</th>
+		<th>
+		<div class="black"></div>
+	    </th>
+	    <th>
+		<div class="brown">
+			<div class="redChecker" id = "checker71red"></div>
+			<div class="blueChecker" id = "checker71blue"></div>
+		</div>
+		</th>
+		<th>
+		<div class="black"></div>
+	    </th>
+	</tr>
+	</table>
+	
+</body>
