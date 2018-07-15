@@ -151,11 +151,11 @@ TODO:
     			$("*").keydown(function(event){
     				if (event.which == 39 && dir == "right") {
     					new move(num, "right", "red");
-    					new jumpRightR(num);
+    					new jumpRed(num, "right");
     				}
     				if (event.which == 37 && dir == "left") {
     					new move(num, "left", "red");
-    					new jumpLeftR(num);
+    					new jumpRed(num, "left");
     				}
     			});
     			});
@@ -239,81 +239,31 @@ TODO:
         		blueCheckersShown.push(newNum);
         		moveTaken = true;
         		//oneTurn();
-        		secondJumpRightB(newNum);
+        		if(dir == "right") {
+        			secondJumpBlue(newNum);
+        		} else if(dir == "left") {
+        			secondJumpBlue(newNum);
+        		}
         	}
 		}
 
-		/*function jumpRightB(original) {
-			//alert("jump");
-			var newNum = original + 22;
-			var jumpedOver = original + 11;
-			if(turn == 1 && !redCheckersShown.includes(newNum) && !blueCheckersShown.includes(newNum)
-				&& newNum > 10 && newNum < 89
-				&& redCheckersShown.includes(jumpedOver)
-				&& moveTaken == false)
-			{
-				$("#checker" + original + "blue").hide();
-        		$("#checker" + newNum + "blue").show();
-        		$("#checker" + jumpedOver + "red").hide();
-
-        		for(var i = 0; i < blueCheckersShown.length; i++){ 
-        			if(blueCheckersShown[i] == original) {
-        				blueCheckersShown.splice(i, 1);
-        			}
-        		}
-        		for(var i = 0; i < redCheckersShown.length; i++){ 
-        			if(redCheckersShown[i] == jumpedOver) {
-        				redCheckersShown.splice(i, 1);
-        			}
-        		}
-        		blueCheckersShown.push(newNum);
-        		moveTaken = true;
-        		//oneTurn();
-        		secondJumpRightB(newNum);
-        		
+		function jumpRed(original, dir) {
+			var newNum;
+			var jumpedOver;
+			if(dir == "right") {
+				newNum = original + 18;
+				jumpedOver = original + 9;
+			} else if(dir == "left") {
+				newNum = original - 22;
+				jumpedOver = original - 11;
+			} else {
+				alert("RedJump in neither direction");
 			}
-		}
-
-		function jumpLeftB(original) {
-			
-			var newNum = original -18;
-			var jumpedOver = original -9;
-			if(turn == 1 && !redCheckersShown.includes(newNum) && !blueCheckersShown.includes(newNum)
-				&& newNum > 10 && newNum < 89
-				&& redCheckersShown.includes(jumpedOver)
-				&& moveTaken == false)
-			{
-				$("#checker" + original + "blue").hide();
-        		$("#checker" + newNum + "blue").show();
-        		$("#checker" + jumpedOver + "red").hide();
-
-        		for(var i = 0; i < blueCheckersShown.length; i++){ 
-        			if(blueCheckersShown[i] == original) {
-        				blueCheckersShown.splice(i, 1);
-        			}
-        		}
-        		for(var i = 0; i < redCheckersShown.length; i++){ 
-        			if(redCheckersShown[i] == jumpedOver) {
-        				redCheckersShown.splice(i, 1);
-        			}
-        		}
-        		blueCheckersShown.push(newNum);
-        		moveTaken = true;
-        		//oneTurn();
-        		secondJumpLeftB(newNum);
-			}
-		}
-		*/
-
-		function jumpRightR(original) {
-			var newNum = original  + 18;
-			var jumpedOver = original + 9;
 			if(turn == 2 && !redCheckersShown.includes(newNum) && !blueCheckersShown.includes(newNum)
 				&& newNum > 10 && newNum < 89
 				&& blueCheckersShown.includes(jumpedOver)
 				&& moveTaken == false)
 			{
-				
 				$("#checker" + original + "red").hide();
         		$("#checker" + newNum + "red").show();
         		$("#checker" + jumpedOver + "blue").hide();
@@ -331,47 +281,26 @@ TODO:
         		redCheckersShown.push(newNum);
         		moveTaken = true;
         		//oneTurn();
-        		secondJumpRightR(newNum);
+        		if (dir == "right") {
+        			secondJumpRed(newNum, "right");
+        		} else if (dir == "left") {
+        			secondJumpRed(newNum, "left");
+        		}
 			}
+
 		}
 
-		function jumpLeftR(original) {
-			var newNum = original - 22;
-			var jumpedOver = original - 11;
-			if(turn == 2 && !redCheckersShown.includes(newNum) && !blueCheckersShown.includes(newNum)
-				&& newNum > 10 && newNum < 89
-				&& blueCheckersShown.includes(jumpedOver)
-				&& moveTaken == false)
-			{
-				
-				$("#checker" + original + "red").hide();
-        		$("#checker" + newNum + "red").show();
-        		$("#checker" + jumpedOver + "blue").hide();
+		
 
-        		for(var i = 0; i < redCheckersShown.length; i++){ 
-        			if(redCheckersShown[i] == original) {
-        				redCheckersShown.splice(i, 1);
-        			}
-        		}
-        		for(var i = 0; i < blueCheckersShown.length; i++){ 
-        			if(blueCheckersShown[i] == jumpedOver) {
-        				blueCheckersShown.splice(i, 1);
-        			}
-        		}
-        		redCheckersShown.push(newNum);
-        		moveTaken = true;
-        		//oneTurn();
-        		secondJumpLeftR(newNum);
-			}
-		}
-
-		function secondJumpRightB(original) {
-			
+		function secondJumpBlue(original) {
 			$("#checker"+ original +"blue").click(function(){
     			$("*").keydown(function(event){
     			if (event.which == 39) {
     				moveTaken = false;
     				new jumpBlue(original, "right");
+    			} else if(event.which == 37) {
+    				moveTaken = false;
+    				new jumpBlue(original, "left");
     			}
     		});
     		});
@@ -381,43 +310,15 @@ TODO:
     		});
 		}
 
-		function secondJumpLeftB(original) {
-			
-			$("#checker"+ original +"blue").click(function(){
-    			$("*").keydown(function(event){
-    			if (event.which == 37) {
-    				moveTaken = false;
-    				new jumpBlue(original, "left");
-    			}
-    		});
-    		});
-    		$("#endTurn").click(function() {
-    			oneTurn();
-    		});
-		}
-
-		function secondJumpRightR(original) {
-			
+		function secondJumpRed(original) {
 			$("#checker"+ original +"red").click(function(){
     			$("*").keydown(function(event){
     			if (event.which == 39) {
     				moveTaken = false;
-    				new jumpRightR(original);
-    			}
-    		});
-    		});
-    		$("#endTurn").click(function() {
-    			oneTurn();
-    		});
-		}
-
-		function secondJumpLeftR(original) {
-			
-			$("#checker"+ original +"red").click(function(){
-    			$("*").keydown(function(event){
-    			if (event.which == 37) {
+    				new jumpRed(original, "right");
+    			} else if(event.which == 37) {
     				moveTaken = false;
-    				new jumpLeftR(original);
+    				new jumpRed(original, "left");
     			}
     		});
     		});
@@ -425,6 +326,7 @@ TODO:
     			oneTurn();
     		});
 		}
+		
 	</script>
 </head>
 <body>
